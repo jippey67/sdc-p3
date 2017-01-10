@@ -3,9 +3,9 @@
 This repository contains the work I did for the behavioral cloning project in the Udacity Self-Driving Car Nanodegree program.
 
 The objective of the project is to devise a model for steering a simulator car around a track, by means of end-to-end learning. This is done by measuring human behaviour while driving the simulator car around. The data provided are:
-1) camera images of front looking cameras on the left, center and right of the car
+1) camera images of front looking cameras on the left, center and right of the car and 
 2) steering angles used by the human driver to drive the car.
-Based on these data a convolutional neural network is trained to simulate the human behaviour in order to be able to drive the car an keep the car on track. Actual driving is done based on only the images of the center camera. 
+Based on these data a convolutional neural network is trained to simulate the human behaviour in order to be able to drive the car and keep the car on track. Actual driving is done based on only the images of the center camera. 
 In the following sections I will discuss the model, the data and the training of the network.
 
 ## MODEL
