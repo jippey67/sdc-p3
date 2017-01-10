@@ -18,6 +18,8 @@ The question arises how to best train this model. The data provided are images w
 
 A detailed overview of the model:
 
+[Layer.pdf](https://github.com/jippey67/sdc-p3/files/696472/Layer.pdf)
+
 ____________________________________________________________________________________________________
 Layer (type)                     Output Shape          Param       Connected to                     =================================================================================
 convolution2d_46 (Convolution2D) (None, 31, 31, 16)     448         convolution2d_input_10[0][0]     ____________________________________________________________________________________________________
