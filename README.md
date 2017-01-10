@@ -62,7 +62,7 @@ First thing that springs to mind is that the validation loss is much smaller tha
 
 
 Epoch 1/20
-8064/8036 [==============================] - 30s - loss: 0.0969 - val_loss: 0.0134
+8064/8036 [==============================] - 30s - loss: 0.0969 - val_loss: 0.0134<br>
 Epoch 2/20
 8064/8036 [==============================] - 28s - loss: 0.0729 - val_loss: 0.0252
 Epoch 3/20
