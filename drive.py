@@ -35,9 +35,11 @@ def telemetry(sid, data):
     imgString = data["image"]
     image = Image.open(BytesIO(base64.b64decode(imgString)))
     image_array = np.asarray(image)
+    # clip off the irrelevant top and bottom pixels
     img = cv2.cvtColor(image_array, cv2.COLOR_RGB2HSV)[60:140, :, :]
-    # resize to square for easier use in convolutions
+    # resize to square
     img = cv2.resize(img, (64, 64), interpolation=cv2.INTER_AREA)
+    # normalize the image into range [-0.5, 0.5]
     img = img.astype(float)
     img = (img / 255) - 0.5
     #img = np.reshape(img,(64,64,1))
@@ -45,6 +47,7 @@ def telemetry(sid, data):
     # This model currently assumes that the features of the model are just the images. Feel free to change this.
     steering_angle = float(model.predict(transformed_image_array, batch_size=1))
     # The driving model currently just outputs a constant throttle. Feel free to edit this.
+    # speed dependent throttle to be able to drive up and down hills in track2
     throttle = 2 - 0.1*float(speed)
     print(steering_angle, throttle)
     send_control(steering_angle, throttle)

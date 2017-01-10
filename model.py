@@ -21,6 +21,7 @@ steer_keep_prob = 0.3
 paths = ['IMG/center_','IMG/left_','IMG/right_']
 
 def train_gen(set,batchsize=64):
+    # a generator that provides images for training purposes.
     timestamp, steer = shuffle_set(set)
     i=0
     while 1:
@@ -66,6 +67,8 @@ def train_gen(set,batchsize=64):
         yield np.reshape(np.array(X_batch),(batchsize,64,64,3)), np.array(y_batch)
 
 def val_gen(set,batchsize=64):
+    # a generator that provides images for validation purposes. Only pictures from the center camera are used, 
+    # as that is the image upon which the car's steering will be based 
     timestamp, steer = shuffle_set(set)
     i = 0
     while 1:
@@ -87,11 +90,13 @@ def val_gen(set,batchsize=64):
         yield np.reshape(np.array(X_batch),(batchsize,64,64,3)), np.array(y_batch)
 
 def norm_image(img):
+    # normalizes the image to prevent numerical issues
     img = img.astype(float)
     img = (img / 255) - 0.5
     return img
 
 def shuffle_set(set):
+    # randomly shuffles the array of images
     np.random.shuffle(set)
     timestamp = set[:, 0]
     steer = set[:, 1].astype(float)
@@ -107,11 +112,11 @@ def adapt_image(pad):
 
 def define_model():
     model = Sequential()
-    # input: 64x64 images with 1 channel -> (64, 64) tensors.
-    # this applies 24 convolution filters of size 3x3 each.
+    # input: 64x64 images with 3 channel -> (64, 64, 3) tensors.
+    # this applies 16 convolution filters of size 3x3 each.
     model.add(Convolution2D(16, 3, 3, border_mode='valid', subsample=(2,2), input_shape=(64,64,3), activation='relu'))
     model.add(Convolution2D(16, 3, 3, border_mode='valid', subsample=(2,2), activation='relu'))
-    model.add(Convolution2D(8, 3, 3, border_mode='valid', subsample=(2,2)))
+    model.add(Convolution2D(8, 3, 3, border_mode='valid', subsample=(2,2), activation='relu'))
     model.add(Convolution2D(4, 3, 3, activation='relu'))
     model.add(Convolution2D(2, 3, 3, activation='relu'))
     model.add(Flatten())
@@ -125,6 +130,7 @@ def define_model():
     return model
 
 def save_model(model):
+    # saves model for later use in simulator
     from keras.models import model_from_json
     model_json = model.to_json()
     with open("model.json", "w") as f:
@@ -139,18 +145,18 @@ with open(autodata) as csvfile:
             cols = line.split(",")
             steer_angle.append( [ (cols[0][len(cols[0]) - 27:-4:]), float(cols[3])] )
 steer_angle = np.array(steer_angle)
+# randomly shuffle the list of samples before splitting into training and validation set
 np.random.shuffle(steer_angle)
 num_samples = len(steer_angle)
 train_set = steer_angle[:int(0.9*num_samples)]
 val_set = steer_angle[int(0.9*num_samples):]
 
+# instantiate generators
 tr_gen = train_gen(train_set, batchsize=64)
-#X_train ,y_train = next(tr_gen)
-
 vl_gen = val_gen(val_set, batchsize=256)
-#X_val, y_val = next(vl_gen)
 
 model = define_model()
+# run the model
 model.fit_generator(generator=tr_gen, samples_per_epoch=len(steer_angle), nb_epoch=10, validation_data=vl_gen, nb_val_samples=64)
 save_model(model)
 
