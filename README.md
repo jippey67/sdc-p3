@@ -44,22 +44,23 @@ After using all entries in the set of images (and associated steering angles) is
 
 ![rgb_img](https://cloud.githubusercontent.com/assets/23193240/21798243/9cd3f472-d713-11e6-9b41-97cff3f525be.jpg)
 *RGB image of the center camera*
+![clipped_img](https://cloud.githubusercontent.com/assets/23193240/21798332/0c5dd650-d714-11e6-9821-0739ea792763.jpg)
+*clipped RGB image*
+
 
 ## TRAINING THE NETWORK
 
-
-
-
+After training for a couple of epochs on a grayscale version of the images, the network was able to drive the car for quite some distance on the first track before it left the road. Changing back to the RGB colorspace didn't help as the car left the track at the same spot. I decided to analyze the spot where the difficulties arose. The RGB image above shows it on the left side. From looking at the image it is quite clear that the border and the road have a very similar color. No edges are visible. I therefore decided to experiment with colorspaces (YUV HSV and HLS) to find one that better discerns between road and border. The following three images show the same image in these color spaces.
 
 ![yuv_img](https://cloud.githubusercontent.com/assets/23193240/21798317/f66e5f40-d713-11e6-98a7-15b0c915fbe4.jpg)
-
+*YUV color space*
 ![hsv_img](https://cloud.githubusercontent.com/assets/23193240/21798329/06748dce-d714-11e6-92cc-c80257bfb9bd.jpg)
-
+*HSV color space*
 ![hls_img](https://cloud.githubusercontent.com/assets/23193240/21798330/095fd304-d714-11e6-8ac7-1384a6a42b1f.jpg)
+*HLS color space*
 
-![clipped_img](https://cloud.githubusercontent.com/assets/23193240/21798332/0c5dd650-d714-11e6-9821-0739ea792763.jpg)
 
-![clip64x64_img](https://cloud.githubusercontent.com/assets/23193240/21798333/0ed6c324-d714-11e6-8272-68499a4e3132.jpg)
+
 
 
 
