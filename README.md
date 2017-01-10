@@ -18,7 +18,7 @@ The question arises how to best train this model. The data provided are images w
 
 A detailed overview of the model:
 
-[Layer.pdf](https://github.com/jippey67/sdc-p3/files/696472/Layer.pdf)
+![layer-1](https://cloud.githubusercontent.com/assets/23193240/21811363/bcdeb338-d74f-11e6-89a7-ea337e3f9b05.jpg)
 
 ____________________________________________________________________________________________________
 Layer (type)                     Output Shape          Param       Connected to                     =================================================================================
