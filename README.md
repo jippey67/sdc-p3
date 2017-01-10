@@ -51,54 +51,46 @@ As the HSV color space best found the border of the road, I decided to continue 
 
 The next question that arises is how many epochs to train the network. Below is the output of a training run of 20 epochs. In each epoch the whole batch of the 8036 images was fed to the network in batches of 64. 
 
-
-
-
-First thing that springs to mind is that the validation loss is much smaller than the training loss right from the first epoch. This is probably caused by the fact that the validation set only uses the center camera images and does not discard images with a low associated steering angle. The next remarkable thing is that the validation loss starts to increase from the very first epoch. Multiple runs were done and the minimum validation loss always occurred after the first or second epoch. As I already mentioned earlier, the use of the mean square error as the loss function has some peculiarities that we see here in action: While the car could drive around the track quite well after training two epochs, the ride was relatively rocky. Training ten epochs provided a much smoother ride, while the validation loss was higher than the minimum, which hints at overfitting. After the tenth epoch the validation loss grew a little further and the system was still able to drive the car around while rockyness increased again. I conclude that the mse is a usable indicator for training purposes, but the proof of the pudding was in the eating. This means in this case that training for 10 epochs provides a good solution, being able to smoothly drive the car around the track. The parameters and model of training 10 epochs are available in this repository as model.h5 en model.json. The model was also able to drive the second track, being the ultimate test for the model.
-
-
-
-
-
-
 Epoch 1/20
 8064/8036 [==============================] - 30s - loss: 0.0969 - val_loss: 0.0134<br>
 Epoch 2/20
-8064/8036 [==============================] - 28s - loss: 0.0729 - val_loss: 0.0252
+8064/8036 [==============================] - 28s - loss: 0.0729 - val_loss: 0.0252<br>
 Epoch 3/20
-8064/8036 [==============================] - 28s - loss: 0.0602 - val_loss: 0.0263
+8064/8036 [==============================] - 28s - loss: 0.0602 - val_loss: 0.0263<br>
 Epoch 4/20
-8064/8036 [==============================] - 28s - loss: 0.0524 - val_loss: 0.0279
+8064/8036 [==============================] - 28s - loss: 0.0524 - val_loss: 0.0279<br>
 Epoch 5/20
-8064/8036 [==============================] - 28s - loss: 0.0494 - val_loss: 0.0256
+8064/8036 [==============================] - 28s - loss: 0.0494 - val_loss: 0.0256<br>
 Epoch 6/20
-8064/8036 [==============================] - 28s - loss: 0.0437 - val_loss: 0.0294
+8064/8036 [==============================] - 28s - loss: 0.0437 - val_loss: 0.0294<br>
 Epoch 7/20
-8064/8036 [==============================] - 28s - loss: 0.0415 - val_loss: 0.0234
+8064/8036 [==============================] - 28s - loss: 0.0415 - val_loss: 0.0234<br>
 Epoch 8/20
-8064/8036 [==============================] - 28s - loss: 0.0389 - val_loss: 0.0325
+8064/8036 [==============================] - 28s - loss: 0.0389 - val_loss: 0.0325<br>
 Epoch 9/20
-8064/8036 [==============================] - 28s - loss: 0.0388 - val_loss: 0.0267
+8064/8036 [==============================] - 28s - loss: 0.0388 - val_loss: 0.0267<br>
 Epoch 10/20
-8064/8036 [==============================] - 28s - loss: 0.0375 - val_loss: 0.0280
+8064/8036 [==============================] - 28s - loss: 0.0375 - val_loss: 0.0280<br>
 Epoch 11/20
-8064/8036 [==============================] - 28s - loss: 0.0369 - val_loss: 0.0259
+8064/8036 [==============================] - 28s - loss: 0.0369 - val_loss: 0.0259<br>
 Epoch 12/20
-8064/8036 [==============================] - 28s - loss: 0.0357 - val_loss: 0.0250
+8064/8036 [==============================] - 28s - loss: 0.0357 - val_loss: 0.0250<br>
 Epoch 13/20
-8064/8036 [==============================] - 28s - loss: 0.0354 - val_loss: 0.0308
+8064/8036 [==============================] - 28s - loss: 0.0354 - val_loss: 0.0308<br>
 Epoch 14/20
-8064/8036 [==============================] - 28s - loss: 0.0353 - val_loss: 0.0303
+8064/8036 [==============================] - 28s - loss: 0.0353 - val_loss: 0.0303<br>
 Epoch 15/20
-8064/8036 [==============================] - 28s - loss: 0.0328 - val_loss: 0.0292
+8064/8036 [==============================] - 28s - loss: 0.0328 - val_loss: 0.0292<br>
 Epoch 16/20
-8064/8036 [==============================] - 28s - loss: 0.0348 - val_loss: 0.0339
+8064/8036 [==============================] - 28s - loss: 0.0348 - val_loss: 0.0339<br>
 Epoch 17/20
-8064/8036 [==============================] - 28s - loss: 0.0332 - val_loss: 0.0328
+8064/8036 [==============================] - 28s - loss: 0.0332 - val_loss: 0.0328<br>
 Epoch 18/20
-8064/8036 [==============================] - 28s - loss: 0.0346 - val_loss: 0.0337
+8064/8036 [==============================] - 28s - loss: 0.0346 - val_loss: 0.0337<br>
 Epoch 19/20
-8064/8036 [==============================] - 28s - loss: 0.0334 - val_loss: 0.0309
+8064/8036 [==============================] - 28s - loss: 0.0334 - val_loss: 0.0309<br>
 Epoch 20/20
-8064/8036 [==============================] - 28s - loss: 0.0336 - val_loss: 0.0339
-In [ ]:
+8064/8036 [==============================] - 28s - loss: 0.0336 - val_loss: 0.0339<br>
+
+First thing that springs to mind is that the validation loss is much smaller than the training loss right from the first epoch. This is probably caused by the fact that the validation set only uses the center camera images and does not discard images with a low associated steering angle. The next remarkable thing is that the validation loss starts to increase from the very first epoch. Multiple runs were done and the minimum validation loss always occurred after the first or second epoch. As I already mentioned earlier, the use of the mean square error as the loss function has some peculiarities that we see here in action: While the car could drive around the track quite well after training two epochs, the ride was relatively rocky. Training ten epochs provided a much smoother ride, while the validation loss was higher than the minimum, which hints at overfitting. After the tenth epoch the validation loss grew a little further and the system was still able to drive the car around while rockyness increased again. I conclude that the mse is a usable indicator for training purposes, but the proof of the pudding was in the eating. This means in this case that training for around 10 epochs provides the best solution, being able to smoothly drive the car around the track. The parameters and model of training 10 epochs are available in this repository as model.h5 en model.json. The model was also able to drive the second track, being the ultimate test for the model.
+
