@@ -42,9 +42,8 @@ The dataset was shuffled before I split it into a training set and a validation 
 
 After using all entries in the set of images (and associated steering angles) is reshuffled to increase arbitrariness in the slection of images in the batches. Before providing the data to the generator the data was shuffled and split into a training set (90% and a validation set (10%).  I wrote two different generators for generating the training set and the validation set, as I only used the center_image in the validation set to calculate the mse. Also no images were discarded from the validation set based on the steering angle being smaller than 'steer_threshold'The data were normalized in the generators to values in the range [-0.5, 0.5] in order to prevent numerical issues from happening.To keep up with the idea of creating a as simple as possible model, I started with feeding converted to gray images to the model. This worked to the extent that the car was able to drive a couple of turns in autonomous mode, but then left the road. Increasing the correction of steering angle for the left and right camera images didn't help and also changing back to the original colorspace (RGB) didn't work out. I took an image of the spot where the car left the track and converted that to YUV, HSV and HLS color spaces. The HSV colorspace provided the best road boundary from a human visual perspective. I decided to use this colorspace for the model.The images as provided by the camera cover the road, but also on the top a lot of air, hills and trees, and on the bottom a piece of the car's hood, that most likely don't contain information about where the road is going. I therefore decide to clip off the top 60 and the bottom 20 pixels. I also resized this 80x320 image to a square of 64x64 one to be flexible in the use of convolution filters.
 
-RGB image of the center camera![rgb_img](https://cloud.githubusercontent.com/assets/23193240/21798243/9cd3f472-d713-11e6-9b41-97cff3f525be.jpg)
-
-
+![rgb_img](https://cloud.githubusercontent.com/assets/23193240/21798243/9cd3f472-d713-11e6-9b41-97cff3f525be.jpg)
+*RGB image of the center camera*
 
 ## TRAINING THE NETWORK
 
