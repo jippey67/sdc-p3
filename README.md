@@ -36,10 +36,7 @@ The images as provided by the camera cover the road, but also on the top a lot o
 
 ## TRAINING THE NETWORK
 
-To keep up with the idea of creating a as simple as possible model, I started with feeding converted-to-gray images to the model. This worked to the extent that the car was able to drive a couple of turns in autonomous mode, but then left the road. Increasing the correction of steering angle for the left and right camera images didn't help and also changing back to the original colorspace (RGB) didn't work out. I took an image of the spot where the car left the track and converted that to YUV, HSV and HLS color spaces. The HSV colorspace provided the best road boundary from a human visual perspective. I decided to use this colorspace for the model.
-
-
-After training for a couple of epochs on a grayscale version of the images, the network was able to drive the car for quite some distance on the first track before it left the road. Changing back to the RGB colorspace didn't help as the car left the track at the same spot. I decided to analyze the spot where the difficulties arose. The RGB image above shows it on the left side. From looking at the image it is quite clear that the border and the road have a very similar color. No edges are visible. I therefore decided to experiment with colorspaces (YUV HSV and HLS) to find one that better discerns between road and border. The following three images show the same image in these color spaces.
+To keep up with the idea of creating a as simple as possible model, I started with feeding converted-to-gray images to the model. After training for a couple of epochs on a grayscale version of the images, the network was able to drive the car for quite some distance on the first track before it left the road. Changing back to the RGB colorspace didn't help as the car left the track at the same spot. I decided to analyze the spot where the difficulties arose. The RGB image above shows it on the left side. From looking at the image it is quite clear that the border and the road have a very similar color. No edges are visible. I therefore decided to experiment with colorspaces (YUV, HSV and HLS) to find one that better discerns between road and border. The following three images show the same image in these color spaces.
 
 ![yuv_img](https://cloud.githubusercontent.com/assets/23193240/21798317/f66e5f40-d713-11e6-98a7-15b0c915fbe4.jpg)
 *YUV color space*
@@ -50,9 +47,14 @@ After training for a couple of epochs on a grayscale version of the images, the 
 ![hls_img](https://cloud.githubusercontent.com/assets/23193240/21798330/095fd304-d714-11e6-8ac7-1384a6a42b1f.jpg)
 *HLS color space*
 
- As the HSV color space best found the border of the road, I decided to continue training with images in that color space. Note that the other color spaces very clearly found the border of the road on the right side. This offers the option to provide all three colorspaces to the network (in 9 layers) in order to find the best parameters. It however turned out that solely using the HSV color space made a reliable network so I didn't pursue this option.
+As the HSV color space best found the border of the road, I decided to continue training with images in that color space. Note that the other color spaces very clearly found the border of the road on the right side. This offers the option to provide all three colorspaces to the network (in 9 layers) in order to find the best parameters. It however turned out that solely using the HSV color space made a reliable network so I didn't pursue this option.
 
-The next question that arises is how many epochs to train the network. First thing that springs to mind is that the validation loss is much smaller than the training loss right from the first epoch. This is probably caused by the fact that the validation set only uses the center camera images and does not discard images with a low associated steering angle. The next remarkable thing is that the validation loss starts to increase from the very first epoch. Multiple runs were done and the minimum validation loss always occurred after the first or second epoch. As I already mentioned earlier, the use of the mean square error as the loss function has some peculiarities that we see here in action: While the car could drive around the track quite well after training two epochs, the ride was relatively rocky. Training ten epochs provided a much smoother ride, while the validation loss was higher than the minimum, which hints at overfitting. After the tenth epoch the validation loss grew a little further and the system was still able to drive the car around while rockyness increased again. I conclude that the mse is a usable indicator for training purposes, but the proof of the pudding was in the eating, which here means that training for 10 epochs provided a good solution, being able to smoothly drive the car around the track. The parameters and model of training 10 epochs are avialble in this repository as model.h5 en model.json. The model was also able to drive the second track, being the ultimate test for the model.
+The next question that arises is how many epochs to train the network. Below is the output of a training run of 20 epochs. In each epoch the whole batch of the 8036 images was fed to the network in batches of 64. 
+
+
+
+
+First thing that springs to mind is that the validation loss is much smaller than the training loss right from the first epoch. This is probably caused by the fact that the validation set only uses the center camera images and does not discard images with a low associated steering angle. The next remarkable thing is that the validation loss starts to increase from the very first epoch. Multiple runs were done and the minimum validation loss always occurred after the first or second epoch. As I already mentioned earlier, the use of the mean square error as the loss function has some peculiarities that we see here in action: While the car could drive around the track quite well after training two epochs, the ride was relatively rocky. Training ten epochs provided a much smoother ride, while the validation loss was higher than the minimum, which hints at overfitting. After the tenth epoch the validation loss grew a little further and the system was still able to drive the car around while rockyness increased again. I conclude that the mse is a usable indicator for training purposes, but the proof of the pudding was in the eating. This means in this case that training for 10 epochs provides a good solution, being able to smoothly drive the car around the track. The parameters and model of training 10 epochs are available in this repository as model.h5 en model.json. The model was also able to drive the second track, being the ultimate test for the model.
 
 
 
@@ -60,9 +62,6 @@ The next question that arises is how many epochs to train the network. First thi
 
 
 Epoch 1/20
-8000/8036 [============================>.] - ETA: 0s - loss: 0.0968
-/home/carnd/anaconda3/envs/carnd-term1/lib/python3.5/site-packages/keras/engine/training.py:1527: UserWarning: Epoch comprised more than `samples_per_epoch` samples, which might affect learning results. Set `samples_per_epoch` correctly to avoid this warning.
-  warnings.warn('Epoch comprised more than '
 8064/8036 [==============================] - 30s - loss: 0.0969 - val_loss: 0.0134
 Epoch 2/20
 8064/8036 [==============================] - 28s - loss: 0.0729 - val_loss: 0.0252
