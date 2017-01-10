@@ -19,18 +19,18 @@ The question arises how to best train this model. The data provided are images w
 A detailed overview of the model:
 
 ____________________________________________________________________________________________________
-Layer (type)                     Output Shape          Param       Connected to                     =================================================================================
-convolution2d_46 (Convolution2D) (None, 31, 31, 16)     448         convolution2d_input_10[0][0]     ____________________________________________________________________________________________________
-convolution2d_47 (Convolution2D) (None, 15, 15, 16)    2320        convolution2d_46[0][0]           ____________________________________________________________________________________________________
-convolution2d_48 (Convolution2D) (None, 7, 7, 8)       1160        convolution2d_47[0][0]           ____________________________________________________________________________________________________
-convolution2d_49 (Convolution2D) (None, 5, 5, 4)       292         convolution2d_48[0][0]           ____________________________________________________________________________________________________
-convolution2d_50 (Convolution2D) (None, 3, 3, 2)       74          convolution2d_49[0][0]           ____________________________________________________________________________________________________
-flatten_10 (Flatten)             (None, 18)            0           convolution2d_50[0][0]           ____________________________________________________________________________________________________
-dropout_10 (Dropout)             (None, 18)            0           flatten_10[0][0]                 ____________________________________________________________________________________________________
-dense_37 (Dense)                 (None, 128)           2432        dropout_10[0][0]                 ____________________________________________________________________________________________________
-dense_38 (Dense)                 (None, 64)            8256        dense_37[0][0]                   ____________________________________________________________________________________________________
-dense_39 (Dense)                 (None, 16)            1040        dense_38[0][0]                   ____________________________________________________________________________________________________
-dense_40 (Dense)                 (None, 1)             17          dense_39[0][0]                   ====================================================================================================
+Layer (type)                     Output Shape          Param       Connected to                     =================================================================================
+convolution2d_46 (Convolution2D) (None, 31, 31, 16)     448         convolution2d_input_10[0][0]     ____________________________________________________________________________________________________
+convolution2d_47 (Convolution2D) (None, 15, 15, 16)    2320        convolution2d_46[0][0]           ____________________________________________________________________________________________________
+convolution2d_48 (Convolution2D) (None, 7, 7, 8)       1160        convolution2d_47[0][0]           ____________________________________________________________________________________________________
+convolution2d_49 (Convolution2D) (None, 5, 5, 4)       292         convolution2d_48[0][0]           ____________________________________________________________________________________________________
+convolution2d_50 (Convolution2D) (None, 3, 3, 2)       74          convolution2d_49[0][0]           ____________________________________________________________________________________________________
+flatten_10 (Flatten)             (None, 18)            0           convolution2d_50[0][0]           ____________________________________________________________________________________________________
+dropout_10 (Dropout)             (None, 18)            0           flatten_10[0][0]                 ____________________________________________________________________________________________________
+dense_37 (Dense)                 (None, 128)           2432        dropout_10[0][0]                 ____________________________________________________________________________________________________
+dense_38 (Dense)                 (None, 64)            8256        dense_37[0][0]                   ____________________________________________________________________________________________________
+dense_39 (Dense)                 (None, 16)            1040        dense_38[0][0]                   ____________________________________________________________________________________________________
+dense_40 (Dense)                 (None, 1)             17          dense_39[0][0]                   ====================================================================================================
 Total params: 16,039Trainable params: 16,039Non-trainable params: 0
 
 
@@ -43,7 +43,7 @@ The dataset was shuffled before I split it into a training set and a validation 
 After using all entries in the set of images (and associated steering angles) is reshuffled to increase arbitrariness in the slection of images in the batches. Before providing the data to the generator the data was shuffled and split into a training set (90% and a validation set (10%).  I wrote two different generators for generating the training set and the validation set, as I only used the center_image in the validation set to calculate the mse. Also no images were discarded from the validation set based on the steering angle being smaller than 'steer_threshold'The data were normalized in the generators to values in the range [-0.5, 0.5] in order to prevent numerical issues from happening.To keep up with the idea of creating a as simple as possible model, I started with feeding converted to gray images to the model. This worked to the extent that the car was able to drive a couple of turns in autonomous mode, but then left the road. Increasing the correction of steering angle for the left and right camera images didn't help and also changing back to the original colorspace (RGB) didn't work out. I took an image of the spot where the car left the track and converted that to YUV, HSV and HLS color spaces. The HSV colorspace provided the best road boundary from a human visual perspective. I decided to use this colorspace for the model.The images as provided by the camera cover the road, but also on the top a lot of air, hills and trees, and on the bottom a piece of the car's hood, that most likely don't contain information about where the road is going. I therefore decide to clip off the top 60 and the bottom 20 pixels. I also resized this 80x320 image to a square of 64x64 one to be flexible in the use of convolution filters.
 
 ![rgb_img](https://cloud.githubusercontent.com/assets/23193240/21798243/9cd3f472-d713-11e6-9b41-97cff3f525be.jpg)
-*RGB image of the center camera*
+*RGB image*
 ![clipped_img](https://cloud.githubusercontent.com/assets/23193240/21798332/0c5dd650-d714-11e6-9821-0739ea792763.jpg)
 *clipped RGB image*
 
@@ -59,20 +59,12 @@ After training for a couple of epochs on a grayscale version of the images, the 
 ![hls_img](https://cloud.githubusercontent.com/assets/23193240/21798330/095fd304-d714-11e6-8ac7-1384a6a42b1f.jpg)
 *HLS color space*
 
+ As the HSV color space best found the border of the road, I decided to continue training with images in that color space. Note that the other color spaces very clearly found the border of the road on the right side. This offers the option to provide all three colorspaces to the network (in 9 layers) in order to find the best parameters. It however turned out that solely using the HSV color space made a reliable network so I didn't pursue this option.
+
+The next question that arises is how many epochs to train the network. First thing that springs to mind is that the validation loss is much smaller than the training loss right from the first epoch. This is probably caused by the fact that the validation set only uses the center camera images and does not discard images with a low associated steering angle. The next remarkable thing is that the validation loss starts to increase from the very first epoch. Multiple runs were done and the minimum validation loss always occurred after the first or second epoch. As I already mentioned earlier, the use of the mean square error as the loss function has some peculiarities that we see here in action: While the car could drive around the track quite well after training two epochs, the ride was relatively rocky. Training ten epochs provided a much smoother ride, while the validation loss was higher than the minimum, which hints at overfitting. After the tenth epoch the validation loss grew a little further and the system was still able to drive the car around while rockyness increased again. I conclude that the mse is a usable indicator for training purposes, but the proof of the pudding was in the eating, which here means that training for 10 epochs provided a good solution, being able to smoothly drive the car around the track. The parameters and model of training 10 epochs are avialble in this repository as model.h5 en model.json. The model was also able to drive the second track, being the ultimate test for the model.
 
 
 
-
-
-
-
-
-
-TRAINING RESULTS
-
-
-
- 
 
 
 
